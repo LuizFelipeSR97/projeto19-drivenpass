@@ -9,31 +9,32 @@ loadEnv();
 
 /* import { handleApplicationErrors } from "@/middlewares"; */
 
-/* import {
+import {
   usersRouter,
-  authenticationRouter,
+  /* authenticationRouter,
   eventsRouter,
   enrollmentsRouter,
   ticketsRouter,
   paymentsRouter,
   hotelsRouter,
-  bookingRouter
-} from "@/routers"; */
+  bookingRouter */
+} from "@/routers";
 
 const app = express();
 app
   .use(cors())
   .use(express.json())
   .get("/health", (_req, res) => res.send("Everything is OK!"))
-/*   .use("/users", usersRouter)
-  .use("/auth", authenticationRouter)
+  .use("/users", usersRouter)
+/* .use("/auth", authenticationRouter)
   .use("/event", eventsRouter)
   .use("/enrollments", enrollmentsRouter)
   .use("/tickets", ticketsRouter)
   .use("/payments", paymentsRouter)
   .use("/hotels", hotelsRouter)
   .use("/booking", bookingRouter) */
-/*   .use(handleApplicationErrors); */
+/*   
+  .use(handleApplicationErrors); */
 
 export function init(): Promise<Express> {
   connectDb();

@@ -6,3 +6,5 @@ export * from "./hotels-service";
 export * from "./booking-service";
 
  */
+
+export * from "./users-service"
