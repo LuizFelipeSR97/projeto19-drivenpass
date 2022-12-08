@@ -10,8 +10,6 @@ async function createUser(email: string, password: string): Promise<User> {
   if (alreadyExistingUser){
     throw duplicatedEmailError()
   }
-
-  //Falta usar a lib jsonwebtoken (?)
     
   const hashedPassword = await bcrypt.hash(password, 12);
 

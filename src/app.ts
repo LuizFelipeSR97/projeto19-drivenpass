@@ -2,6 +2,7 @@ import "reflect-metadata";
 import "express-async-errors";
 import express, { Express } from "express";
 import cors from "cors";
+import { handleApplicationErrors } from "./middlewares/error-handling";
 
 import { loadEnv, connectDb, disconnectDB } from "@/config";
 
@@ -11,7 +12,8 @@ loadEnv();
 
 import {
   usersRouter,
-  authRouter
+  authRouter,
+  credentialsRouter
   /* authenticationRouter,
   eventsRouter,
   enrollmentsRouter,
@@ -28,6 +30,9 @@ app
   .get("/health", (_req, res) => res.send("Everything is OK!"))
   .use("/users", usersRouter)
   .use("/auth", authRouter)
+  .use("/credentials", credentialsRouter)
+  
+  .use(handleApplicationErrors);
 /* .use("/auth", authenticationRouter)
   .use("/event", eventsRouter)
   .use("/enrollments", enrollmentsRouter)
@@ -35,8 +40,7 @@ app
   .use("/payments", paymentsRouter)
   .use("/hotels", hotelsRouter)
   .use("/booking", bookingRouter) */
-/*   
-  .use(handleApplicationErrors); */
+  
 
 export function init(): Promise<Express> {
   connectDb();
