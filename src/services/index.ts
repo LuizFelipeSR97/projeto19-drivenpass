@@ -8,3 +8,4 @@ export * from "./booking-service";
  */
 
 export * from "./users-service"
+export * from "./auth-service"

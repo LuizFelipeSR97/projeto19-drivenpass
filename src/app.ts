@@ -11,6 +11,7 @@ loadEnv();
 
 import {
   usersRouter,
+  authRouter
   /* authenticationRouter,
   eventsRouter,
   enrollmentsRouter,
@@ -26,6 +27,7 @@ app
   .use(express.json())
   .get("/health", (_req, res) => res.send("Everything is OK!"))
   .use("/users", usersRouter)
+  .use("/auth", authRouter)
 /* .use("/auth", authenticationRouter)
   .use("/event", eventsRouter)
   .use("/enrollments", enrollmentsRouter)

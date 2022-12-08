@@ -8,3 +8,4 @@ export * from "./hotel-controller";
  */
 
 export * from "./users-controller"
+export * from "./auth-controller"

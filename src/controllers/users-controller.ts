@@ -8,7 +8,7 @@ export async function postUser(req: Request, res: Response) {
 
   try {
     const user = await userService.createUser(email, password);
-    return res.status(httpStatus.CREATED).json({
+    return res.status(httpStatus.CREATED).send({
       id: user.id,
       email: user.email,
     });

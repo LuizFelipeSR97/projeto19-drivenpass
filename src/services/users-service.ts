@@ -3,12 +3,9 @@ import { User } from "@prisma/client";
 import { duplicatedEmailError } from "@/errors";
 import bcrypt from "bcrypt";
 
-export async function createUser(email: string, password: string): Promise<User> {
-
-  //Verificar se ta de acordo com o schema, se sim prosseguir
+async function createUser(email: string, password: string): Promise<User> {
 
   const alreadyExistingUser = await userRepository.findUser(email)
-  console.log(alreadyExistingUser)
 
   if (alreadyExistingUser){
     throw duplicatedEmailError()
