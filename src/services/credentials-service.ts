@@ -1,33 +1,80 @@
 import userRepository from "@/repositories/user-repository";
 import { Credential } from "@prisma/client";
 import credentialsRepository from "@/repositories/credentials-repository";
-import { notFoundError, unauthorizedError } from "@/errors";
-import bcrypt from "bcrypt";
+import { duplicatedTitleError, notFoundError, unauthorizedError } from "@/errors";
+
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('secretKey');
 
 async function getCredentials(userId: number, id: number) {
 
   if (isNaN(id)){
-    const credentials = await credentialsRepository.getCredentials(userId)
-    return credentials
+    const credentials = await credentialsRepository.getCredentials(userId);
+
+    //Fazer um map pra transformar os passwords de cada credential em seu valor decryptado
+    const decryptedCredentials = credentials.map(cred=>{
+      const decryptedPassword=cryptr.decrypt(cred.password)
+      cred.password=decryptedPassword
+      return cred
+    })
+
+    return decryptedCredentials
   }
 
-  const credentials = await credentialsRepository.getCredentialsById(id)
+  const credential = await credentialsRepository.getCredentialsById(id)
 
-  if (!credentials){
+  if (!credential){
     throw notFoundError()
   }
 
-  if(credentials.userId!==userId){
+  if(credential.userId!==userId){
     throw unauthorizedError()
   }
 
-  return credentials
+  const decryptedPassword = cryptr.decrypt(credential.password);
+  const decryptedCredential = {...credential, password: decryptedPassword}
+
+  return decryptedCredential
 }
 
-//Fazer tambem o getCredentials by id
+async function postCredential(title: string, url: string, username: string, password: string, userId:number) {
+
+  const encryptedPassword = cryptr.encrypt(password);
+
+  const existingCredential = await credentialsRepository.getCredentialByTitle(title, userId)
+
+  if(existingCredential){
+    throw duplicatedTitleError()
+  }
+
+  const createdCredential = await credentialsRepository.postCredential(title, url, username, encryptedPassword, userId)
+  return createdCredential
+}
+
+async function deleteCredential(id: number, userId: number) {
+
+  if (isNaN(id)){
+    throw notFoundError()
+  }
+
+  //Chamar o repository que apaga essa credential
+
+  const searchedCredential = await credentialsRepository.getCredentialByIdAndUserId(id, userId)
+
+  if (!searchedCredential){
+    throw notFoundError()
+  }
+
+  const deletedCredential = await credentialsRepository.deleteCredential(id)
+  
+  return deletedCredential
+}
 
 const credentialsService = {
-  getCredentials
+  getCredentials,
+  postCredential,
+  deleteCredential
 };
 
+export type CreateCredentialParams = Omit<Credential, "id" | "userId">;
 export default credentialsService;
