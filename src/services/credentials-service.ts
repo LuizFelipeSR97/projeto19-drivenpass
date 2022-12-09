@@ -11,7 +11,6 @@ async function getCredentials(userId: number, id: number) {
   if (isNaN(id)){
     const credentials = await credentialsRepository.getCredentials(userId);
 
-    //Fazer um map pra transformar os passwords de cada credential em seu valor decryptado
     const decryptedCredentials = credentials.map(cred=>{
       const decryptedPassword=cryptr.decrypt(cred.password)
       cred.password=decryptedPassword

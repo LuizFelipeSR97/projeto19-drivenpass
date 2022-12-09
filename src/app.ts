@@ -13,14 +13,8 @@ loadEnv();
 import {
   usersRouter,
   authRouter,
-  credentialsRouter
-  /* authenticationRouter,
-  eventsRouter,
-  enrollmentsRouter,
-  ticketsRouter,
-  paymentsRouter,
-  hotelsRouter,
-  bookingRouter */
+  credentialsRouter,
+  networksRouter
 } from "@/routers";
 
 const app = express();
@@ -31,15 +25,8 @@ app
   .use("/users", usersRouter)
   .use("/auth", authRouter)
   .use("/credentials", credentialsRouter)
-  
-  .use(handleApplicationErrors);
-/* .use("/auth", authenticationRouter)
-  .use("/event", eventsRouter)
-  .use("/enrollments", enrollmentsRouter)
-  .use("/tickets", ticketsRouter)
-  .use("/payments", paymentsRouter)
-  .use("/hotels", hotelsRouter)
-  .use("/booking", bookingRouter) */
+  .use("/networks", networksRouter)  
+  .use(handleApplicationErrors); //Essa daqui é necessaria?
   
 
 export function init(): Promise<Express> {

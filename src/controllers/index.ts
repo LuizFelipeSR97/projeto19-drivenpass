@@ -9,4 +9,5 @@ export * from "./hotel-controller";
 
 export * from "./users-controller";
 export * from "./auth-controller";
-export * from "./credentials-controller"
+export * from "./credentials-controller";
+export * from "./networks-controller"
