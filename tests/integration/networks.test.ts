@@ -101,8 +101,8 @@ describe("GET /networks", () => {
       const networkId = network.id
       const response = await server.get(`/networks?id=${network.id}`).set("Authorization", `Bearer ${token}`);
 
-      //expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toBe("Fazer o toEqual e ajeitar o tipo do body");
+      expect(response.body).toBe({...network});
+      expect(response.status).toBe(httpStatus.OK);
 
       });
     });

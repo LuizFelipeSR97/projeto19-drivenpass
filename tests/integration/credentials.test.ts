@@ -101,8 +101,8 @@ describe("GET /credentials", () => {
       const credentialId = credential.id
       const response = await server.get(`/credentials?id=${credential.id}`).set("Authorization", `Bearer ${token}`);
 
-      //expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toBe("Fazer o toEqual e ajeitar o tipo do body");
+      expect(response.body).toBe({...credential});
+      expect(response.status).toBe(httpStatus.OK);
 
       });
     });
@@ -175,9 +175,9 @@ describe("POST /credentials", () => {
       const newBody = generateNewValidBody()
       const response = await server.post("/credentials").set("Authorization", `Bearer ${token}`).send(newBody);
 
-      expect(response.status).toBe(httpStatus.CREATED);
       expect(response.body).toEqual({...newBody,userId: user.id, id: expect.any(Number), password: expect.any(String)
-      });
+      })
+      expect(response.status).toBe(httpStatus.CREATED);
     });
     
   });

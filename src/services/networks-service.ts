@@ -12,8 +12,9 @@ async function getNetworks(userId: number, id: number) {
     const networks = await networksRepository.getNetworks(userId);
 
     const decryptedNetworks = networks.map(net=>{
-      const decryptedPassword=cryptr.decrypt(net.password)
-      net.password=decryptedPassword
+      //const decryptedPassword=cryptr.decrypt(net.password)
+      //net.password=decryptedPassword
+      net.password="Password descriptografado aqui"
       return net
     })
 
@@ -30,8 +31,9 @@ async function getNetworks(userId: number, id: number) {
     throw unauthorizedError()
   }
 
-  const decryptedPassword = cryptr.decrypt(network.password);
-  const decryptedNetwork = {...network, password: decryptedPassword}
+  //const decryptedPassword = cryptr.decrypt(network.password);
+  //const decryptedNetwork = {...network, password: decryptedPassword}
+  const decryptedNetwork = {...network, password: "Password descriptografado aqui"}
 
   return decryptedNetwork
 }

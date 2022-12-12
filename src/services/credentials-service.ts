@@ -2,8 +2,7 @@ import userRepository from "@/repositories/user-repository";
 import { Credential } from "@prisma/client";
 import credentialsRepository from "@/repositories/credentials-repository";
 import { duplicatedTitleError, notFoundError, unauthorizedError } from "@/errors";
-
-const Cryptr = require('cryptr');
+import Cryptr from 'cryptr';
 const cryptr = new Cryptr('secretKey');
 
 async function getCredentials(userId: number, id: number) {
@@ -11,13 +10,12 @@ async function getCredentials(userId: number, id: number) {
   if (isNaN(id)){
     const credentials = await credentialsRepository.getCredentials(userId);
 
-    //Dar uma olhada aqui
     const decryptedCredentials = credentials.map(cred=>{
-      const decryptedPassword=cryptr.decrypt(cred.password)
-      cred.password=decryptedPassword
+      //const decryptedPassword=cryptr.decrypt(cred.password)
+      //cred.password=decryptedPassword
+      cred.password="Password descriptografado aqui"
       return cred
-    })
-    //Ate aqui
+    });
 
     return decryptedCredentials
   }
@@ -32,8 +30,9 @@ async function getCredentials(userId: number, id: number) {
     throw unauthorizedError()
   }
 
-  const decryptedPassword = cryptr.decrypt(credential.password);
-  const decryptedCredential = {...credential, password: decryptedPassword}
+  //const decryptedPassword = cryptr.decrypt(credential.password);
+  //const decryptedCredential = {...credential, password: decryptedPassword}
+  const decryptedCredential = {...credential, password: "Password descriptografado aqui"}
 
   return decryptedCredential
 }
@@ -57,8 +56,6 @@ async function deleteCredential(id: number, userId: number) {
   if (isNaN(id)){
     throw notFoundError()
   }
-
-  //Chamar o repository que apaga essa credential
 
   const searchedCredential = await credentialsRepository.getCredentialByIdAndUserId(id, userId)
 
