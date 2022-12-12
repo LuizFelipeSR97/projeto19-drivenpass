@@ -21,12 +21,12 @@ const app = express();
 app
   .use(cors())
   .use(express.json())
-  .get("/health", (_req, res) => res.send("Everything is OK!"))
+  .get("/health", (_req, res) => res.send("OK!"))
   .use("/users", usersRouter)
   .use("/auth", authRouter)
   .use("/credentials", credentialsRouter)
   .use("/networks", networksRouter)  
-  .use(handleApplicationErrors); //Essa daqui é necessaria?
+  //.use(handleApplicationErrors); //Essa daqui é necessaria?
   
 
 export function init(): Promise<Express> {

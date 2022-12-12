@@ -12,6 +12,12 @@ export async function signIn(req: Request, res: Response) {
       token
     });
   } catch (error) {
+    if (error.name === "InvalidEmailError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
+    if (error.name === "InvalidCredentialsError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
     return res.status(httpStatus.BAD_REQUEST).send(error);
   }
   

@@ -14,7 +14,6 @@ async function createUser(email: string, password: string): Promise<User> {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const userCreated = await userRepository.createUser(email, hashedPassword)
-  console.log(userCreated)
   return userCreated
 }
 
@@ -23,4 +22,5 @@ const userService = {
 };
 
 export type CreateUserParams = Pick<User, "email" | "password">;
+export type CreateToken = {token: string};
 export default userService;
