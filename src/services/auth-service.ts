@@ -25,19 +25,8 @@ export async function signIn(email: string, password: string){
   return token
 }
 
-export async function authorization(token: string) {
-
-  //Recebe token
-  //Verifica se o token bate com o jwt
-  const userInfo = jwt.decode(token)
-  //Retorna o userId do usuario
-  //Retorna esse userId pro usuario e res.status(200)
-
-}
-
 const authorizationService = {
-  signIn,
-  authorization
+  signIn
 };
 
 export default authorizationService;

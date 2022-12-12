@@ -11,6 +11,5 @@ credentialsRouter
     .get("/", getCredentials)
     .post("/", validateBody(createCredentialSchema), postCredential)
     .delete("/:id", deleteCredential)
-    //.delete("/", ?validateBody(createUserSchema), ?postUser)
 
 export { credentialsRouter };

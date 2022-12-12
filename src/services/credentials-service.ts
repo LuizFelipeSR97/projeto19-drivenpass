@@ -11,11 +11,13 @@ async function getCredentials(userId: number, id: number) {
   if (isNaN(id)){
     const credentials = await credentialsRepository.getCredentials(userId);
 
+    //Dar uma olhada aqui
     const decryptedCredentials = credentials.map(cred=>{
       const decryptedPassword=cryptr.decrypt(cred.password)
       cred.password=decryptedPassword
       return cred
     })
+    //Ate aqui
 
     return decryptedCredentials
   }

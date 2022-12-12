@@ -2,7 +2,7 @@ import app, { init } from "@/app";
 import faker, { FakerError } from "@faker-js/faker";
 import httpStatus from "http-status";
 import supertest from "supertest";
-import { createUser, createCredential } from "../factories";
+import { createUser, createNetwork } from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 import { User } from "@prisma/client";
 
@@ -17,11 +17,11 @@ beforeEach(async () => {
 
 const server = supertest(app);
 
-describe("GET /credentials", () => {
+describe("GET /networks", () => {
 
   it("should respond with status 401 when no token was sent", async () => {
 
-    const response = await server.get("/credentials");
+    const response = await server.get("/networks");
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -29,7 +29,7 @@ describe("GET /credentials", () => {
   it("should respond with status 401 when invalid token was sent", async () => {
 
     const token = "Bearer "+faker.lorem.word(15);
-    const response = await server.get("/credentials").set({ Authorization: token })
+    const response = await server.get("/networks").set({ Authorization: token })
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -41,65 +41,65 @@ describe("GET /credentials", () => {
       password: faker.internet.password(10),
     });
 
-    it("should respond with empty array when user doesn't have credentials yet", async () => {
+    it("should respond with empty array when user doesn't have networks yet", async () => {
       const body = generateValidBody();
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
 
-      const response = await server.get("/credentials").set("Authorization", `Bearer ${token}`);
+      const response = await server.get("/networks").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual([])
     });
 
-    it("should respond with objects array when user has at least one credential", async () => {
+    it("should respond with objects array when user has at least one network", async () => {
 
       const body = generateValidBody();
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user.id);
-      const response = await server.get("/credentials").set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user.id);
+      const response = await server.get("/networks").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toEqual([credential]);
+      expect(response.body).toEqual([network]);
     });
 
     describe("when there is a query in url", () => {
 
-      it("if the number passed in id's query doesn't match any credential, should respond with status 404", async () => {
+      it("if the number passed in id's query doesn't match any network, should respond with status 404", async () => {
         
       const body = generateValidBody();
       const user = await createUser(body);
       const token = await generateValidToken(user);
 
-      const response = await server.get("/credentials?id=1").set("Authorization", `Bearer ${token}`);
+      const response = await server.get("/networks?id=1").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
 
       });
 
-      it("if the number passed in id's query is from a credential that is not user's, should respond with status 401", async () => {
+      it("if the number passed in id's query is from a network that is not user's, should respond with status 401", async () => {
         
       const body = generateValidBody();
       const body2 = generateValidBody();
       const user = await createUser(body);
       const user2 = await createUser(body2);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user2.id)
-      const response = await server.get(`/credentials?id=${credential.id}`).set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user2.id)
+      const response = await server.get(`/networks?id=${network.id}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.UNAUTHORIZED);
 
       });
 
-      it("if the number passed in id's query is from a user's credential, should respond with status 200 and an object with this credential infos", async () => {
+      it("if the number passed in id's query is from a user's network, should respond with status 200 and an object with this network infos", async () => {
         
       const body = generateValidBody();
       const user = await createUser(body);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user.id)
-      const credentialId = credential.id
-      const response = await server.get(`/credentials?id=${credential.id}`).set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user.id)
+      const networkId = network.id
+      const response = await server.get(`/networks?id=${network.id}`).set("Authorization", `Bearer ${token}`);
 
       //expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toBe("Fazer o toEqual e ajeitar o tipo do body");
@@ -110,19 +110,18 @@ describe("GET /credentials", () => {
 
 });
 
-describe("POST /credentials", () => {
+describe("POST /networks", () => {
 
   const generateNewValidBody = () => ({
     title: faker.company.companyName(),
-    url: faker.internet.url(),
-    username: faker.company.companyName(),
-    password: faker.internet.password()
+    network: faker.company.companyName(),
+    password: faker.internet.password(6),
   });
 
   it("should respond with status 401 when no token was sent", async () => {
     
     const newBody = generateNewValidBody()
-    const response = await server.post("/credentials").send(newBody);
+    const response = await server.post("/networks").send(newBody);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -131,7 +130,7 @@ describe("POST /credentials", () => {
 
     const newBody = generateNewValidBody()
     const token = "Bearer "+faker.lorem.word(15);
-    const response = await server.post("/credentials").set({ Authorization: token }).send(newBody);
+    const response = await server.post("/networks").set({ Authorization: token }).send(newBody);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -157,9 +156,9 @@ describe("POST /credentials", () => {
         username: faker.company.companyName(),
         password: faker.internet.password()
       }
-      const credential = await createCredential(user.id)
+      const network = await createNetwork(user.id)
 
-      const response = await server.post("/credentials").set("Authorization", `Bearer ${token}`).send({...newBody, title: credential.title});
+      const response = await server.post("/networks").set("Authorization", `Bearer ${token}`).send({...newBody, title: network.title});
 
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
       });
@@ -173,7 +172,7 @@ describe("POST /credentials", () => {
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
       const newBody = generateNewValidBody()
-      const response = await server.post("/credentials").set("Authorization", `Bearer ${token}`).send(newBody);
+      const response = await server.post("/networks").set("Authorization", `Bearer ${token}`).send(newBody);
 
       expect(response.status).toBe(httpStatus.CREATED);
       expect(response.body).toEqual({...newBody,userId: user.id, id: expect.any(Number), password: expect.any(String)
@@ -184,11 +183,11 @@ describe("POST /credentials", () => {
   
 });
 
-describe("DELETE /credentials/:id", () => {
+describe("DELETE /networks/:id", () => {
 
   it("should respond with status 401 when no token was sent", async () => {
 
-    const response = await server.delete("/credentials/1");
+    const response = await server.delete("/networks/1");
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -196,7 +195,7 @@ describe("DELETE /credentials/:id", () => {
   it("should respond with status 401 when invalid token was sent", async () => {
 
     const token = "Bearer "+faker.lorem.word(15);
-    const response = await server.delete("/credentials/1").set({ Authorization: token });
+    const response = await server.delete("/networks/1").set({ Authorization: token });
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -213,8 +212,8 @@ describe("DELETE /credentials/:id", () => {
       const body = generateValidBody();
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user.id);
-      const response = await server.delete("/credentials/a"+(credential.id+1)).set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user.id);
+      const response = await server.delete("/networks/a"+(network.id+1)).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
@@ -224,35 +223,35 @@ describe("DELETE /credentials/:id", () => {
       const body = generateValidBody();
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user.id);
-      const response = await server.delete("/credentials/a").set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user.id);
+      const response = await server.delete("/networks/a").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
-    it("should respond with status 404 when id is not a user's credential ", async () => {
+    it("should respond with status 404 when id is not a user's network ", async () => {
 
       const body = generateValidBody();
       const body2 = generateValidBody();
       const user:User = await createUser(body);
       const user2:User = await createUser(body2);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user2.id);
-      const response = await server.delete("/credentials/"+credential.id).set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user2.id);
+      const response = await server.delete("/networks/"+network.id).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
-    it("should respond with status 200 and the credential deleted when id is an user's credential ", async () => {
+    it("should respond with status 200 and the network deleted when id is an user's network ", async () => {
 
       const body = generateValidBody();
       const user:User = await createUser(body);
       const token = await generateValidToken(user);
-      const credential = await createCredential(user.id);
-      const response = await server.delete("/credentials/"+credential.id).set("Authorization", `Bearer ${token}`);
+      const network = await createNetwork(user.id);
+      const response = await server.delete("/networks/"+network.id).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.OK);
-      expect(response.body).toEqual(credential);
+      expect(response.body).toEqual(network);
     });
 
   });

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import faker from "@faker-js/faker";
-import { Credential, User } from "@prisma/client";
+import { Credential, Network, User } from "@prisma/client";
 import { prisma } from "@/config";
 
 export async function createUser(params: Partial<User> = {}): Promise<User> {
@@ -22,6 +22,18 @@ export async function createCredential(userId:number): Promise<Credential> {
       title: faker.company.companyName(),
       url: faker.internet.url(),
       username: faker.company.companyName(),
+      password: faker.internet.password(6),
+      userId
+    },
+  });
+}
+
+export async function createNetwork(userId:number): Promise<Network> {
+
+  return prisma.network.create({
+    data: {
+      title: faker.company.companyName(),
+      network: faker.company.companyName(),
       password: faker.internet.password(6),
       userId
     },

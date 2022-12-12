@@ -1,5 +1,5 @@
 import credentialsService from "@/services/credentials-service";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { AuthenticatedRequest } from "@/middlewares/authentication";
 import httpStatus from "http-status";
 
@@ -34,12 +34,6 @@ export async function postCredential(req: AuthenticatedRequest, res: Response) {
     return res.status(httpStatus.CREATED).send(newCredential)
 
   } catch (error) {
-    if (error.name === "DuplicatedTitleError") {
-      return res.status(httpStatus.BAD_REQUEST).send(error);
-    }
-    if (error.name === "UnauthorizedError") {
-      return res.status(httpStatus.UNAUTHORIZED).send(error);
-    }
     return res.status(httpStatus.BAD_REQUEST).send(error);
   }
 }
@@ -54,11 +48,8 @@ export async function deleteCredential(req: AuthenticatedRequest, res: Response)
     return res.status(httpStatus.OK).send(deleteCredential)
 
   } catch (error) {
-    if (error.name === "DuplicatedTitleError") {
-      return res.status(httpStatus.BAD_REQUEST).send(error);
-    }
-    if (error.name === "UnauthorizedError") {
-      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    if (error.name === "NotFoundError") {
+      return res.status(httpStatus.NOT_FOUND).send(error);
     }
     return res.status(httpStatus.BAD_REQUEST).send(error);
   }

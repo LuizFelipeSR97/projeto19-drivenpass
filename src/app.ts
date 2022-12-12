@@ -2,13 +2,10 @@ import "reflect-metadata";
 import "express-async-errors";
 import express, { Express } from "express";
 import cors from "cors";
-import { handleApplicationErrors } from "./middlewares/error-handling";
 
 import { loadEnv, connectDb, disconnectDB } from "@/config";
 
 loadEnv();
-
-/* import { handleApplicationErrors } from "@/middlewares"; */
 
 import {
   usersRouter,
@@ -25,8 +22,7 @@ app
   .use("/users", usersRouter)
   .use("/auth", authRouter)
   .use("/credentials", credentialsRouter)
-  .use("/networks", networksRouter)  
-  //.use(handleApplicationErrors); //Essa daqui é necessaria?
+  .use("/networks", networksRouter)
   
 
 export function init(): Promise<Express> {
